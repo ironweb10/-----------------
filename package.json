@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@discordjs/builders": "^1.5.0",
+    "@discordjs/rest": "^1.6.0",
+    "axios": "^0.26.1",
+    "colors": "^1.4.0",
+    "discord-api-types": "^0.37.35",
+    "discord.js": "^13.0.1",
+    "express": "^4.17.3",
+    "fnbr": "^2.4.0",
+    "https-proxy-agent": "^5.0.0",
+    "nconf": "^0.12.0",
+    "node": "^16.20.2",
+    "pm2": "^5.2.0",
+    "wokcommands": "^2.1.0",
+    "ws": "^8.5.0",
+    "xml-parser": "^1.2.1"
+  }
+}

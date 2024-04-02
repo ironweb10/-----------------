@@ -1,0 +1,33 @@
+import { DefinitionOptions } from '../jxt';
+import { NS_GEOLOC } from '../Namespaces';
+import { PubsubItemContent } from './';
+export interface Geolocation extends PubsubItemContent {
+    itemType?: typeof NS_GEOLOC;
+    lang?: string;
+    accuracy?: number;
+    altitude?: number;
+    altitudeAccuracy?: number;
+    area?: string;
+    heading?: number;
+    building?: string;
+    country?: string;
+    countryCode?: string;
+    datum?: string;
+    description?: string;
+    error?: number;
+    floor?: string;
+    latitude?: number;
+    locality?: string;
+    longitude?: number;
+    postalCode?: string;
+    region?: string;
+    room?: string;
+    speed?: number;
+    street?: string;
+    text?: string;
+    timestamp?: Date;
+    tzo?: number;
+    uri?: string;
+}
+declare const Protocol: DefinitionOptions;
+export default Protocol;
