@@ -6,7 +6,7 @@
     "bid_path": "FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics/Backpacks/BID_044_Robo",
     "eid": "EID_Robot",
     "eid_path": "FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics/Dances/EID_Robot",
-    "level": "1",
+    "level": "1000",
     "banner": "BRSeason07Trash",
     "add_users": true,
     "join_users": true,
@@ -18,12 +18,21 @@
     "inuse_status": "In Use Wait ❌ | dsc.gg/iron-web10",
     "inuse_onlinetype": "xa",
     "whitelist": [
-      "",
+      "624f7c6175d44e208478261bc8e11c80",
       "",
       ""
     ]
   },
 
+
+        "discord": {
+    "run_discord_client": true,
+    "guild_slash_status_response": "1200008446716678227",
+    "command_guild": "",
+    "status": "By iron web10",
+    "status_type": "WATCHING",
+    "disable_crash_command": true
+  },
 
   "system": {
     "bot_loading_message": "Bot is loading!",

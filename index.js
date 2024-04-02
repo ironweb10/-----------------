@@ -396,7 +396,7 @@ const GetVersion = require('./utils/version');
     }
   } else if (commandName === 'enablecrowns'){
      try {
-       fnbrclient.party.setPlaylist({ playlistName: "playlist_creative_edit_1" })
+       fnbrclient.party.setPlaylist({ playlistName: "playlist_bots_nobuildbr_duo" })
        fnbrclient.party.chat.send("A user has enabled Crowns meaning the lobbys might be harder!")
        function crownleaveparty() {
          fnbrclient.party.leave()
