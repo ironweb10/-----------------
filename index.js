@@ -713,25 +713,7 @@ const GetVersion = require('./utils/version');
 
   client.on('friend:message', (m) => handleCommand(m, m.author));
 
-const handleCommand = async (message, sender) => {
-    console.log(`${sender.displayName}: ${message.content}`);
-    const [command, query] = message.content.slice(1).split(' ');
-    const content = query.toLowerCase();
 
-    if (command === 'ai' && query) {
-        try {
-            const apiUrl = `https://api.popcat.xyz/chatbot?msg=${encodeURIComponent(content)}`;
-            const response = await axios.get(apiUrl);
-            console.log('API Response:', response.data);
-            const apiResponse = response.data && response.data.response;
-            console.log('Extracted API Response:', apiResponse);
-            message.reply(apiResponse || 'API response is empty or undefined.');
-        } catch (apiError) {
-            console.log('API Error:', apiError);
-            message.reply('Failed to fetch response from the API.');
-        }
-    }
-};
 
 
   client.on("party:member:updated", async (Member) => {
