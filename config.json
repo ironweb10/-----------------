@@ -38,7 +38,7 @@
     "bot_loading_message": "Bot is loading!",
     "web_message": "Bot is online",
     "reload": true,
-    "reload_time": 5400000,
+    "reload_time": 600000,
     "bot_version": "8.1"
   }
 
