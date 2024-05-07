@@ -18,7 +18,7 @@
     "inuse_status": "In Use Wait ❌ | dsc.gg/iron-web10",
     "inuse_onlinetype": "xa",
     "whitelist": [
-      "624f7c6175d44e208478261bc8e11c80",
+      "",
       "",
       ""
     ]
@@ -38,7 +38,7 @@
     "bot_loading_message": "Bot is loading!",
     "web_message": "Bot is online",
     "reload": true,
-    "reload_time": 600000,
+    "reload_time": 300000,
     "bot_version": "8.1"
   }
 
