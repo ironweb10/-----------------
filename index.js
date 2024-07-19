@@ -600,131 +600,110 @@ Iron mm [${'Matchmaking'}], 'Matchmaking Started' \`\`\``)
 
 
 matchmakingClient.on('unexpected-response', (request, response) => {
-            let data = '';
-            response.on('data', (chunk) => data += chunk);
+    let data = '';
+    response.on('data', (chunk) => data += chunk);
 
-            response.on('end', () => {
-              const baseMessage = `[MATCHMAKING] Erreur lors de la connexion au service de mise en relation: (status ${response.statusCode} ${response.statusMessage})`;
+    response.on('end', () => {
+        const baseMessage = `[MATCHMAKING] Erreur lors de la connexion au service de mise en relation: (status ${response.statusCode} ${response.statusMessage})`;
+        client.party.chat.send(`Erreur lors de la connexion au service de mise en relation: (status ${response.statusCode} ${response.statusMessage})`);
 
-              client.party.chat.send(`Erreur lors de la connexion au service de mise en relation: (status ${response.statusCode} ${response.statusMessage})`)
+        if (data === '') {
+            console.error(baseMessage);
+        } else if (response.headers['content-type']?.startsWith('application/json')) {
+            const jsonData = JSON.parse(data);
 
-              if (data == '') {
-                console.error(baseMessage);
-
-              }
-
-              else if (response.headers['content-type'].startsWith('application/json')) {
-
-                const jsonData = JSON.parse(data);
-
-                if (jsonData.errorCode) {
-
-                  console.error(`${baseMessage}, ${jsonData.errorCode} ${jsonData.errorMessage || ''}`);
-                  client.party.chat.send(`Error while connecting to matchmaking service: ${jsonData.errorCode} ${jsonData.errorMessage || ''}`)
-
-                } else {
-                  console.error(`${baseMessage} response body: ${data}`)
-                }
-
-              }
-
-              else if (response.headers['x-epic-error-name']) {
-
-                console.error(`${baseMessage}, ${response.headers['x-epic-error-name']} response body: ${data}`);
-
-              }
-
-              else if (response.headers['content-type'].startsWith('text/html')) {
-                const parsed = xmlparser(data);
-
-                if (parsed.root) {
-
-                  try {
-
-                    const title = parsed.root.children.find(x => x.name == 'head').children.find(x => x.name == 'title');
-
-                    console.error(`${baseMessage} HTML title: ${title}`)
-
-                  } catch { console.error(`${baseMessage} HTML response body: ${data}`) }
-
-                }
-
-                else { console.error(`${baseMessage} HTML response body: ${data}`) }
-              }
-
-              else { console.error(`${baseMessage} response body: ${data}`) }
-            })
-          })
-
-          if (bLog) {
-            matchmakingClient.on('close', function () {
-              webhookClient.send(`
-\`\`\`diff
-- [${'Matchmaking'}], Connexion au matchmaking fermée\`\`\``)
-
-            });
-          }
-
-          matchmakingClient.on('message', (msg) => {
-            const message = JSON.parse(msg);
-            if (bLog) {
-              webhookClient.send(`[${'Matchmaking'}]`, 'Message du matchmaker', `[${message}]`)
+            if (jsonData.errorCode) {
+                console.error(`${baseMessage}, ${jsonData.errorCode} ${jsonData.errorMessage || ''}`);
+                client.party.chat.send(`Error while connecting to matchmaking service: ${jsonData.errorCode} ${jsonData.errorMessage || ''}`);
+            } else {
+                console.error(`${baseMessage} response body: ${data}`);
             }
+        } else if (response.headers['x-epic-error-name']) {
+            console.error(`${baseMessage}, ${response.headers['x-epic-error-name']} response body: ${data}`);
+        } else if (response.headers['content-type']?.startsWith('text/html')) {
+            const parsed = xmlparser(data);
 
-            if (message.name === 'Error') {
-              bIsMatchmaking = false;
+            if (parsed.root) {
+                try {
+                    const title = parsed.root.children.find(x => x.name === 'head').children.find(x => x.name === 'title');
+                    console.error(`${baseMessage} HTML title: ${title}`);
+                } catch {
+                    console.error(`${baseMessage} HTML response body: ${data}`);
+                }
+            } else {
+                console.error(`${baseMessage} HTML response body: ${data}`);
             }
-          });
-
-          break;
+        } else {
+            console.error(`${baseMessage} response body: ${data}`);
         }
+    });
+});
 
-        case "BattleRoyalePostMatchmaking": {
-          if (bLog) {
+if (bLog) {
+    matchmakingClient.on('close', function () {
+        webhookClient.send(`
+\`\`\`diff
+- [Matchmaking], Connexion au matchmaking fermée\`\`\``);
+    });
+}
+
+matchmakingClient.on('message', (msg) => {
+    const message = JSON.parse(msg);
+    if (bLog) {
+        webhookClient.send(`[Matchmaking]`, 'Message du matchmaker', `[${message}]`);
+    }
+
+    if (message.name === 'Error') {
+        bIsMatchmaking = false;
+    }
+});
+
+switch (updated.meta.schema["Default:PartyState_s"]) {
+    case "BattleRoyalePostMatchmaking":
+        if (bLog) {
             webhookClient.send(`
 \`\`\`fix
-[${'Party'}], Les joueurs sont entrés dans l’écran de chargement avec le Bot**Iron mm**, Je quitte le groupe dans 5sec...\`\`\``)
-          }
+[Party], Les joueurs sont entrés dans l’écran de chargement avec le Bot**Iron mm**, Je quitte le groupe dans 5sec...\`\`\``);
+        }
 
-          if (client.party?.me?.isReady) {
-            client.party.me.setReadiness(false)
-          }
-          bIsMatchmaking = false;
-          client.party.members.map(async (player) => {
+        if (client.party?.me?.isReady) {
+            client.party.me.setReadiness(false);
+        }
+        bIsMatchmaking = false;
+        client.party.members.map(async (player) => {
             if (player.id === client.user.self.id) return;
-            client.friend.remove(player.displayName).catch((err) => { console.log("Impossible d'enlever l'ami : " + player.displayName) })
-          })
-
-          if (leave_after) {
-            client.party.leave();
-            break;
-          } else {
-            if (!leave_after) {
-              async function timeexpire() {
-                client.party.chat.send("Time expired!")
-                await sleep(1.2)
-                client.party.leave()
-                webhookClient.send("[PARTY] Je quitte la partie pour la raison **Trop temp pour lancer une game c'est casse couille quoi**!")
-                webhookClient.send("[PARTY] Le suivi du temps s’est arrêté!")
-                timerstatus = false
-              }
-              this.ID = setTimeout(timeexpire, 3600000)
-              break;
+            try {
+                await client.friend.remove(player.displayName);
+            } catch (err) {
+                console.log("Impossible d'enlever l'ami : " + player.displayName);
             }
-          }
-          await client.party.setPrivacy(Enums.PartyPrivacy.PUBLIC);
-        }
+        });
 
-        case "BattleRoyaleView": {
-          break;
+        if (leave_after) {
+            client.party.leave();
+        } else {
+            async function timeexpire() {
+                client.party.chat.send("Time expired!");
+                await sleep(1.2);
+                client.party.leave();
+                webhookClient.send("[PARTY] Je quitte la partie pour la raison **Trop temp pour lancer une game c'est casse couille quoi**!");
+                webhookClient.send("[PARTY] Le suivi du temps s’est arrêté!");
+                timerstatus = false;
+            }
+            this.ID = setTimeout(timeexpire, 3600000);
         }
+        await client.party.setPrivacy(Enums.PartyPrivacy.PUBLIC);
+        break;
 
-        default: {
-          if (bLog) { webhookClient.send(`[${'Party'}]`, 'Unknow PartyState', `${updated.meta.schema["Default:PartyState_s"]}`) }
-          break;
+    case "BattleRoyaleView":
+        break;
+
+    default:
+        if (bLog) {
+            webhookClient.send(`[Party]`, 'Unknow PartyState', `${updated.meta.schema["Default:PartyState_s"]}`);
         }
-      }
-    })
+        break;
+}
 
           
        
