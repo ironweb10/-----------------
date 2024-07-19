@@ -501,25 +501,33 @@ const GetVersion = require('./utils/version');
           await axios.get(
             `https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/game/v2/matchmakingservice/ticket/player/${client.user.id}?${query}`,
             {
-              headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`
+                headers: {
+                  Accept: 'application/json',
+                  Authorization: `Bearer ${token}`
+                }
               }
-            }
-          )
-        );
+            )
+          );
 
-        if (TicketRequest.status != 200) {
-          console.log(`[${'Matchmaking'.cyan}]`, 'Error while obtaining ticket'.red);
-          client.party.me.setReadiness(false);
-          return;
-        }
+          console.log("TICKET REQUEST: " + TicketRequest)
 
+        if (TicketRequest.status !== 200) {
+            webhookClient.send(`
+\`\`\`diff
+- [${'Matchmaking'}], Error while obtaining ticket\`\`\``);
+            client.party.me.setReadiness(false);
+            return console.log(TicketRequest);
+          }
 
-        const ticket = TicketRequest.data;
+          /**
+           * @type {MMSTicket}
+           */
+          const ticket = TicketRequest.data;
 
-
-        const HashRequest = (
+          /**
+           * @type {String}
+           */
+          const HashRequest = (
             await axios.post(
               // "https://plebs.polynite.net/api/checksum",
               "https://api.waferbot.com/checksum",
@@ -533,7 +541,7 @@ const GetVersion = require('./utils/version');
           if (TicketRequest.status !== 200) {
             webhookClient.send(`
 \`\`\`diff
-- [${'Matchmaking'}], Error al obtener el Hash\`\`\``);
+- [${'Matchmaking'}], Erreur lors de l’obtention du hash\`\`\``);
             client.party.me.setReadiness(false);
             return;
           }
@@ -542,125 +550,157 @@ const GetVersion = require('./utils/version');
           //const calculatedchecksum = calcChecksum(ticket.payload, ticket.signature);
           const calculatedchecksum = HashRequest.data;
 
-        
+          var MMSAuth = [
+            "Epic-Signed",
+            ticket.ticketType,
+            ticket.payload,
+            ticket.signature,
+            calculatedchecksum
+          ];
 
-        var MMSAuth = [
-          "Epic-Signed",
-          ticket.ticketType,
-          ticket.payload,
-          ticket.signature,
-          calculatedchecksum
-        ];
-
-        const matchmakingClient = new Websocket(
-          ticket.serviceUrl,
-          {
-            perMessageDeflate: false,
-            rejectUnauthorized: false,
-            headers: {
-              Origin: ticket.serviceUrl.replace('ws', 'http'),
-              Authorization: MMSAuth.join(" "),
-              ...websocketHeaders
-            }
-          }
-        );
-
-        matchmakingClient.on('unexpected-response', (request, response) => {
-          let data = '';
-          response.on('data', (chunk) => data += chunk);
-
-          response.on('end', () => {
-            const baseMessage = `[${'Matchmaking'.cyan}]` + ' Error'.red + ` Error while connecting to matchmaking service: (status ${response.statusCode} ${response.statusMessage})`;
-
-            client.party.chat.send(`Error while connecting to matchmaking service: (status ${response.statusCode} ${response.statusMessage})`)
-
-            if (data == '') {
-              console.error(baseMessage);
-            }
-
-            else if (response.headers['content-type'].startsWith('application/json')) {
-
-              const jsonData = JSON.parse(data);
-
-              if (jsonData.errorCode) {
-
-                console.error(`${baseMessage}, ${jsonData.errorCode} ${jsonData.errorMessage || ''}`);
-                client.party.chat.send(`Error while connecting to matchmaking service: ${jsonData.errorCode} ${jsonData.errorMessage || ''}`)
-
-              } else {
-                console.error(`${baseMessage} response body: ${data}`)
+          const matchmakingClient = new Websocket(
+            ticket.serviceUrl,
+            {
+              perMessageDeflate: false,
+              rejectUnauthorized: false,
+              headers: {
+                Origin: ticket.serviceUrl.replace('ws', 'http'),
+                Authorization: MMSAuth.join(" "),
+                ...websocketHeaders
               }
-
             }
+          );
 
-            else if (response.headers['x-epic-error-name']) {
 
-              console.error(`${baseMessage}, ${response.headers['x-epic-error-name']} response body: ${data}`);
+matchmakingClient.on('unexpected-response', (request, response) => {
+            let data = '';
+            response.on('data', (chunk) => data += chunk);
 
-            }
+            response.on('end', () => {
+              const baseMessage = `[MATCHMAKING] Erreur lors de la connexion au service de mise en relation: (status ${response.statusCode} ${response.statusMessage})`;
 
-            else if (response.headers['content-type'].startsWith('text/html')) {
-              const parsed = xmlparser(data);
+              client.party.chat.send(`Erreur lors de la connexion au service de mise en relation: (status ${response.statusCode} ${response.statusMessage})`)
 
-              if (parsed.root) {
-
-                try {
-
-                  const title = parsed.root.children.find(x => x.name == 'head').children.find(x => x.name == 'title');
-
-                  console.error(`${baseMessage} HTML title: ${title}`)
-
-                } catch { console.error(`${baseMessage} HTML response body: ${data}`) }
+              if (data == '') {
+                console.error(baseMessage);
 
               }
 
-              else { console.error(`${baseMessage} HTML response body: ${data}`) }
-            }
+              else if (response.headers['content-type'].startsWith('application/json')) {
 
-            else { console.error(`${baseMessage} response body: ${data}`) }
+                const jsonData = JSON.parse(data);
+
+                if (jsonData.errorCode) {
+
+                  console.error(`${baseMessage}, ${jsonData.errorCode} ${jsonData.errorMessage || ''}`);
+                  client.party.chat.send(`Error while connecting to matchmaking service: ${jsonData.errorCode} ${jsonData.errorMessage || ''}`)
+
+                } else {
+                  console.error(`${baseMessage} response body: ${data}`)
+                }
+
+              }
+
+              else if (response.headers['x-epic-error-name']) {
+
+                console.error(`${baseMessage}, ${response.headers['x-epic-error-name']} response body: ${data}`);
+
+              }
+
+              else if (response.headers['content-type'].startsWith('text/html')) {
+                const parsed = xmlparser(data);
+
+                if (parsed.root) {
+
+                  try {
+
+                    const title = parsed.root.children.find(x => x.name == 'head').children.find(x => x.name == 'title');
+
+                    console.error(`${baseMessage} HTML title: ${title}`)
+
+                  } catch { console.error(`${baseMessage} HTML response body: ${data}`) }
+
+                }
+
+                else { console.error(`${baseMessage} HTML response body: ${data}`) }
+              }
+
+              else { console.error(`${baseMessage} response body: ${data}`) }
+            })
           })
-        })
 
-        if (bLog) {
-          matchmakingClient.on('close', function () {
-            console.log(`[${'Matchmaking'.cyan}]`, 'Connection to the matchmaker closed')
-          });
-        }
-        
-        matchmakingClient.on('message', (msg) => {
-          const message = JSON.parse(msg);
           if (bLog) {
-            console.log(`[${'Matchmaking'.cyan}]`, 'Message from the matchmaker', message)
+            matchmakingClient.on('close', function () {
+              webhookClient.send(`
+\`\`\`diff
+- [${'Matchmaking'}], Connexion au matchmaking fermée\`\`\``)
+
+            });
           }
 
-          if (message.name === 'Error') {
-            bIsMatchmaking = false;
-          }
-        });
+          matchmakingClient.on('message', (msg) => {
+            const message = JSON.parse(msg);
+            if (bLog) {
+              webhookClient.send(`[${'Matchmaking'}]`, 'Message du matchmaker', `[${message}]`)
+            }
 
-        break;
-      }
+            if (message.name === 'Error') {
+              bIsMatchmaking = false;
+            }
+          });
 
-      case "BattleRoyalePostMatchmaking": {
-        if (bLog) { console.log(`[${'Party'.magenta}]`, 'Players got loading screen, Exiting party...') }
-        if (client.party?.me?.isReady) {
-          client.party.me.setReadiness(false)
+          break;
         }
-        bIsMatchmaking = false;
-        client.party.leave();
-        break;
-      }
 
-      case "BattleRoyaleView": {
-        break;
-      }
+        case "BattleRoyalePostMatchmaking": {
+          if (bLog) {
+            webhookClient.send(`
+\`\`\`fix
+[${'Party'}], Les joueurs sont entrés dans l’écran de chargement avec le Bot**${client.user.self.displayName}**, Je quitte le groupe dans 5sec...\`\`\``)
+          }
 
-      default: {
-        if (bLog) { console.log(`[${'Party'.magenta}]`, 'Unknow PartyState'.yellow, updated.meta.schema["Default:PartyState_s"]) }
-        break;
+          if (client.party?.me?.isReady) {
+            client.party.me.setReadiness(false)
+          }
+          bIsMatchmaking = false;
+          client.party.members.map(async (player) => {
+            if (player.id === client.user.self.id) return;
+            client.friend.remove(player.displayName).catch((err) => { console.log("Impossible d'enlever l'ami : " + player.displayName) })
+          })
+
+          if (leave_after) {
+            client.party.leave();
+            break;
+          } else {
+            if (!leave_after) {
+              async function timeexpire() {
+                client.party.chat.send("Time expired!")
+                await sleep(1.2)
+                client.party.leave()
+                webhookClient.send("[PARTY] Je quitte la partie pour la raison **Trop temp pour lancer une game c'est casse couille quoi**!")
+                webhookClient.send("[PARTY] Le suivi du temps s’est arrêté!")
+                timerstatus = false
+              }
+              this.ID = setTimeout(timeexpire, 3600000)
+              break;
+            }
+          }
+          await client.party.setPrivacy(Enums.PartyPrivacy.PUBLIC);
+        }
+
+        case "BattleRoyaleView": {
+          break;
+        }
+
+        default: {
+          if (bLog) { webhookClient.send(`[${'Party'}]`, 'Unknow PartyState', `${updated.meta.schema["Default:PartyState_s"]}`) }
+          break;
+        }
       }
-    }
-  })
+    })
+
+          
+       
   const findCosmetic = (query, type) => {
     return cosmetics.find((c) => (c.id.toLowerCase() === query.toLowerCase()
       || c.name.toLowerCase() === query.toLowerCase()) && c.type.value === type);
