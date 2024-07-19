@@ -38,7 +38,7 @@ const bot_leave_time = nconf.get('fortnite:leave_time')
 const addusers = nconf.get('fortnite:add_users')
 const run_discord_client = nconf.get('discord:run_discord_client')
 const discord_crash_command = nconf.get('discord:disable_crash_command')
-
+const webhookClient = new Discord.WebhookClient({ url: process.env.DISCORD_WEBHOOK_URL });
 const crypto = require('crypto');
 const express = require("express");
 const app = express()
