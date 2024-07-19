@@ -703,8 +703,7 @@ switch (updated.meta.schema["Default:PartyState_s"]) {
             webhookClient.send(`[Party]`, 'Unknow PartyState', `${updated.meta.schema["Default:PartyState_s"]}`);
         }
         break;
-};
-
+})
           
        
   const findCosmetic = (query, type) => {
