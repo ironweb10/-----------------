@@ -456,14 +456,14 @@ const GetVersion = require('./utils/version');
           if (bIsMatchmaking) {
             webhookClient.send(`
 \`\`\`fix
-Le bot ${client.user.displayName} Et les membres ont commencé à lancer le matchmaking! \`\`\``)
+Le bot Iron mm Et les membres ont commencé à lancer le matchmaking! \`\`\``)
             return;
           }
           bIsMatchmaking = true;
           if (bLog) {
             webhookClient.send(`
 \`\`\`fix
-${client.user.displayName} [${'Matchmaking'}], 'Matchmaking Started' \`\`\``)
+Iron mm [${'Matchmaking'}], 'Matchmaking Started' \`\`\``)
           }
 
           /**
@@ -682,7 +682,7 @@ matchmakingClient.on('unexpected-response', (request, response) => {
           if (bLog) {
             webhookClient.send(`
 \`\`\`fix
-[${'Party'}], Les joueurs sont entrés dans l’écran de chargement avec le Bot**${client.user.displayName}**, Je quitte le groupe dans 5sec...\`\`\``)
+[${'Party'}], Les joueurs sont entrés dans l’écran de chargement avec le Bot**Iron mm**, Je quitte le groupe dans 5sec...\`\`\``)
           }
 
           if (client.party?.me?.isReady) {
