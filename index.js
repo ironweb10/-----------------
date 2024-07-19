@@ -520,12 +520,13 @@ Iron mm [${'Matchmaking'}], 'Matchmaking Started' \`\`\``)
 
           console.log(client.auth.auths.get("fortnite"))
           const token = client.auth.auths.get("fortnite").token
+            const accid = client.auth.auths.get("fortnite").account_id
           //const token = client.auth.auths.get("fortnite").token;
 
 
         const TicketRequest = (
           await axios.get(
-            `https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/game/v2/matchmakingservice/ticket/player/${client.user.id}?${query}`,
+            `https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/game/v2/matchmakingservice/ticket/player/${accid}?${query}`,
             {
                 headers: {
                   Accept: 'application/json',
