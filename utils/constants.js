@@ -16,7 +16,13 @@ module.exports.allowedPlaylists = Object.freeze([
    "playlist_stormdatatest_squad",
        "playlist_mash_squads_legacy",
     "playlist_melt_squads",
-    "playlist_creative_play_V2"
+    "playlist_creative_play_V2",
+    "playlist_blastberryduo",
+    "playlist_blastberrytrio",
+    "playlist_blastberrysquad",
+    "playlist_blastberrynobuildsquad",
+    "playlist_blastberrynobuildduo",
+    "playlist_blastberrynobuildtrio"
 ])
 
 module.exports.websocketHeaders = Object.freeze({
