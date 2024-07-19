@@ -519,19 +519,29 @@ const GetVersion = require('./utils/version');
         const ticket = TicketRequest.data;
 
 
-         const HashRequest = (
-           await axios.post(
+        const HashRequest = (
+            await axios.post(
+              // "https://plebs.polynite.net/api/checksum",
+              "https://api.waferbot.com/checksum",
+              ticket,
+              {
+                Accept: 'application/json'
+              }
+            )
+          );
 
-             "https://api.waferbot.com/checksum",
-             ticket,
-            {
-               Accept: 'application/json'
-             }
-           )
-         );
-        
+          if (TicketRequest.status !== 200) {
+            webhookClient.send(`
+\`\`\`diff
+- [${'Matchmaking'}], Error al obtener el Hash\`\`\``);
+            client.party.me.setReadiness(false);
+            return;
+          }
 
-        const hash = HashRequest.data;
+
+          //const calculatedchecksum = calcChecksum(ticket.payload, ticket.signature);
+          const calculatedchecksum = HashRequest.data;
+
         
 
         var MMSAuth = [
@@ -539,7 +549,7 @@ const GetVersion = require('./utils/version');
           ticket.ticketType,
           ticket.payload,
           ticket.signature,
-          hash
+          calculatedchecksum
         ];
 
         const matchmakingClient = new Websocket(
