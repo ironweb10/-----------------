@@ -518,8 +518,8 @@ Iron mm [${'Matchmaking'}], 'Matchmaking Started' \`\`\``)
             }
           });
 
-          console.log(client.auth.sessions.get('fortnite'))
-          const token = client.auth.sessions.get("fortnite").accessToken
+          console.log(client.auth.auths.get("fortnite"))
+          const token = client.auth.auths.get("fortnite").token
           //const token = client.auth.auths.get("fortnite").token;
 
 
