@@ -323,7 +323,7 @@ const GetVersion = require('./utils/version');
   console.log(`UserAgent set to, ${axios.defaults.headers["user-agent"]}`);
   webhookClient.send(`
 \`\`\`fix
-Bot en préparation \`\`\``)
+Bot loading \`\`\``)
   // this?
   /**
      * @type {ClientOptions}
