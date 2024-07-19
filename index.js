@@ -430,72 +430,98 @@ const GetVersion = require('./utils/version');
   });
 
 
-  var bIsMatchmaking = false;
+ var bIsMatchmaking = false;
 
-  client.on('party:updated', async (updated) => {
+    client.on('party:updated', async (updated) => {
 
-    switch (updated.meta.schema["Default:PartyState_s"]) {
-      case "BattleRoyalePreloading": {
+      switch (updated.meta.schema["Default:PartyState_s"]) {
+        case "BattleRoyalePreloading": {
 
-        var loadout = client.party.me.meta.set("Default:LobbyState_j",
-          {
-            "LobbyState": {
-              "hasPreloadedAthena": true
+          var loadout = client.party.me.meta.set("Default:LobbyState_j",
+            {
+              "LobbyState": {
+                "hasPreloadedAthena": true
+              }
             }
-          }
-        );
+          );
 
-        await client.party.me.sendPatch({
-          'Default:LobbyState_j': loadout,
-        });
+          await client.party.me.sendPatch({
+            'Default:LobbyState_j': loadout,
+          });
 
-        break;
-      }
-
-      case "BattleRoyaleMatchmaking": {
-        if (bIsMatchmaking) {
-          console.log('Members has started matchmaking!')
-          return;
-        }
-        bIsMatchmaking = true;
-        if (bLog) { console.log(`[${'Matchmaking'.cyan}]`, 'Matchmaking Started') }
-
-        const PartyMatchmakingInfo = JSON.parse(updated.meta.schema["Default:PartyMatchmakingInfo_j"]).PartyMatchmakingInfo;
-
-
-        const playlistId = PartyMatchmakingInfo.playlistName.toLocaleLowerCase();
-
-        if (!allowedPlaylists.includes(playlistId)) {
-          console.log("Unsupported playlist", playlistId)
-          client.party.chat.send(`Playlist id: ${playlistId} is not a supported gamemode!`)
-          client.party.me.setReadiness(false);
-          return;
+          break;
         }
 
-        var partyPlayerIds = client.party.members.filter(x => x.isReady).map(x => x.id).join(',')
-
-        const bucketId = `${PartyMatchmakingInfo.buildId}:${PartyMatchmakingInfo.playlistRevision}:${PartyMatchmakingInfo.regionId}:${playlistId}`
-
-
-        console.log(partyPlayerIds)
-
-        var query = new URLSearchParams();
-        query.append("partyPlayerIds", partyPlayerIds);
-        query.append("player.platform", "Windows");
-        query.append("player.option.partyId", client.party.id);
-        query.append("input.KBM", "true");
-        query.append("player.input", "KBM");
-        query.append("bucketId", bucketId);
-        console.log(bucketId)
-
-        client.party.members.filter(x => x.isReady).forEach(Member => {
-          const platform = Member.meta.get("Default:PlatformData_j");
-          if (!query.has(`party.{PlatformName}`)) {
-            query.append(`party.{PlatformName}`, "true")
+        case "BattleRoyaleMatchmaking": {
+          if (bIsMatchmaking) {
+            webhookClient.send(`
+\`\`\`fix
+Le bot ${client.user.self.displayName} Et les membres ont commencé à lancer le matchmaking! \`\`\``)
+            return;
           }
-        });
+          bIsMatchmaking = true;
+          if (bLog) {
+            webhookClient.send(`
+\`\`\`fix
+${client.user.self.displayName} [${'Matchmaking'}], 'Matchmaking Started' \`\`\``)
+          }
 
-        const token = client.auth.auths.get("fortnite").token;
+          /**
+           * @type {PartyMatchmakingInfo}
+           */
+          const PartyMatchmakingInfo = JSON.parse(updated.meta.schema["Default:PartyMatchmakingInfo_j"]).PartyMatchmakingInfo;
+
+
+          const playlistId = PartyMatchmakingInfo.playlistName.toLocaleLowerCase();
+
+
+
+          if (!allowedPlaylists.includes(playlistId)) {
+            webhookClient.send(`
+\`\`\`diff
+- Unsupported playlist, ${playlistId}\`\`\``)
+            client.party.chat.send(`Playlist id: ${playlistId} is not a supported gamemode!`)
+
+            client.party.me.setReadiness(false);
+            client.party.members.map(async (player) => {
+              if (player.id === client.user.self.id) return;
+              client.friend.remove(player.displayName).catch((err) => { console.log("Impossible d'enlever l'ami : " + player.displayName) })
+            })
+            bIsMatchmaking = false;
+            client.party.leave()
+            return;
+          }
+
+          var partyPlayerIds = client.party.members.filter(x => x.isReady).map(x => x.id).join(',')
+
+          const bucketId = `${PartyMatchmakingInfo.buildId}:${PartyMatchmakingInfo.playlistRevision}:${PartyMatchmakingInfo.regionId}:${playlistId}`
+          webhookClient.send(`${bucketId}`)
+
+
+
+          // auth.missing_player_id
+
+          webhookClient.send(`${partyPlayerIds}`)
+
+          var query = new URLSearchParams();
+          query.append("partyPlayerIds", partyPlayerIds);
+          query.append("player.platform", "Windows");
+          query.append("player.option.partyId", client.party.id);
+          query.append("input.KBM", "true");
+          query.append("player.input", "KBM");
+          query.append("bucketId", bucketId);
+
+          client.party.members.filter(x => x.isReady).forEach(Member => {
+            const platform = Member.meta.get("Default:PlatformData_j");
+            if (!query.has(`party.{PlatformName}`)) {
+              query.append(`party.{PlatformName}`, "true")
+            }
+          });
+
+          console.log(client.auth.sessions.get('fortnite'))
+          const token = client.auth.sessions.get("fortnite").accessToken
+          //const token = client.auth.auths.get("fortnite").token;
+
 
         const TicketRequest = (
           await axios.get(
