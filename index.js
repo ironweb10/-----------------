@@ -15,7 +15,7 @@ const clientOptions = {
 const client = new FNclient(clientOptions);
 party = client.party
 
-
+const Discord = require("discord.js")
 const cid = nconf.get('fortnite:cid')
 const bid = nconf.get('fortnite:bid')
 const eid = nconf.get('fortnite:eid')
