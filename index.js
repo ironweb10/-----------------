@@ -19,8 +19,7 @@ const HttpsProxyAgent = require('https-proxy-agent');
 const xmlparser = require('xml-parser');
 require('colors');
 const Discord = require("discord.js")
-const webhookClient = new Discord.WebhookClient({ url: "https://discord.com/api/webhooks/1238151849744535672/gsVOsk-rA1ahivgWtqZu9WcSPSQUtUIdRDFEKsSPEg7-ENyULS_oNQITxwxSB8gQgtPi" });
-
+const webhookClient = new Discord.WebhookClient({ url: process.env.DISCORD_WEBHOOK_URL });
 const clientOptions = {
   defaultStatus: "Launching",
   auth: {},
