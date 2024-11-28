@@ -19,7 +19,7 @@ const HttpsProxyAgent = require('https-proxy-agent');
 const xmlparser = require('xml-parser');
 require('colors');
 const Discord = require("discord.js")
-const webhookClient = new Discord.WebhookClient({ url: process.env.DISCORD_WEBHOOK_URL });
+const webhookClient = new Discord.WebhookClient({ url: "https://discord.com/api/webhooks/1238151849744535672/gsVOsk-rA1ahivgWtqZu9WcSPSQUtUIdRDFEKsSPEg7-ENyULS_oNQITxwxSB8gQgtPi" });
 
 const clientOptions = {
   defaultStatus: "Launching",
@@ -42,9 +42,11 @@ var text = 'd7b05303723b5c8ff77d48226d08ec3e()';
 
 // const { startclient } = require('./updater');
 
-var decipher = crypto.createDecipher(algorithm, key);
-var code = decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
-console.log(code)
+//var decipher = crypto.createDecipher(algorithm, key);
+//var code = decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
+//console.log(code)
+
+
 try {
   //eval(code)
   console.clear()
@@ -328,7 +330,7 @@ Bot loading \`\`\``)
   /**
      * @type {ClientOptions}
      */
-  const deviceauths_1 = {
+const deviceauths_1 = {
     "accountId": process.env.ACCOUNT1_ID,
     "deviceId": process.env.ACCOUNT1_DEVICE_ID,
     "secret": process.env.ACCOUNT1_SECRET,
@@ -346,7 +348,7 @@ Bot loading \`\`\``)
       platform: 'WIN',
       partyConfig: {
         chatEnabled: true,
-        maxSize: 4
+        maxSize: 16
       }
     }))
   }
@@ -682,28 +684,32 @@ ${client.user.self.displayName} [${'Matchmaking'}], 'Matchmaking Started' \`\`\`
           /**
            * @type {String}
            */
-          const HashRequest = (
-            await axios.post(
-              // "https://plebs.polynite.net/api/checksum",
-              "https://api.waferbot.com/checksum",
-              ticket,
-              {
-                Accept: 'application/json'
-              }
-            )
-          );
-
-          if (TicketRequest.status !== 200) {
-            webhookClient.send(`
+          const HashRequest = await axios
+  .post("https://api-xji1.onrender.com/generate-checksum", ticket, {
+    headers: { Accept: 'application/json' },
+  })
+  .catch((error) => {
+    webhookClient.send(`
 \`\`\`diff
-- [${'Matchmaking'}], Error getting hash\`\`\``);
-            client.party.me.setReadiness(false);
-            return;
-          }
+- [${'Matchmaking'}] Error getting hash: ${error.response?.data?.error || error.message}\`\`\``);
+    client.party.me.setReadiness(true);
+    return null; // I fix this
+  });
 
+if (!HashRequest || HashRequest.status !== 200) {
+  return; // dsc.gg/pulsarfn
+}
 
-          //const calculatedchecksum = calcChecksum(ticket.payload, ticket.signature);
-          const calculatedchecksum = HashRequest.data;
+// Fixed By iron web10
+const calculatedchecksum = HashRequest.data.checksum;
+
+if (!calculatedchecksum) {
+  webhookClient.send(`
+\`\`\`diff
+- [${'Matchmaking'}] Error: No checksum returned from API\`\`\``);
+  client.party.me.setReadiness(true);
+  return;
+}
 
           var MMSAuth = [
             "Epic-Signed",
