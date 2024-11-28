@@ -19,7 +19,7 @@
     "inuse_onlinetype": "xa"
   },
   "discord": {
-    "run_discord_client": true,
+    "run_discord_client": false,
     "guild_slash_status_response": "1263838865962303609",
     "command_guild": "",
     "status": "By iron web10",
