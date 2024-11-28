@@ -34,17 +34,9 @@ const clientOptions = {
 };
 const client = new FNclient(clientOptions);
 party = client.party
-var algorithm = 'aes256';
-var key = 'e6apis';
-var text = 'd7b05303723b5c8ff77d48226d08ec3e()';
-//config
 
 
-// const { startclient } = require('./updater');
 
-//var decipher = crypto.createDecipher(algorithm, key);
-//var code = decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
-//console.log(code)
 
 
 try {
@@ -57,56 +49,26 @@ client.on('party:invite', async (request) => {
   const party = client.party;
   const inviterName = request.sender.displayName;
   
-  // Liste des noms à bannir
+//Put here the blacklisted accounts
   const bannedNames = ['1', '2', '3'];
   
-  // Vérifie si le nom de l'inviteur est dans la liste des noms bannis
+
   if (bannedNames.includes(inviterName)) {
-      await request.decline(); // Refuse automatiquement l'invitation
+      await request.decline(); 
       return;
   }
   
-  // Si l'inviteur n'est pas dans la liste des noms bannis, décidez si vous souhaitez accepter ou refuser l'invitation
+
   if (party.size === 1) {
-      // Si le groupe a seulement 1 membre, vous pouvez choisir d'accepter automatiquement
+      
       await request.accept();
   } else {
-      // Si le groupe a plus d'un membre, vous pouvez choisir de l'accepter automatiquement ou d'appliquer d'autres conditions
-      // Ici, nous déclinons automatiquement l'invitation si le groupe a plus d'un membre
+      
       await request.decline();
   }
 });
 
-// fetch(`https://nextdroopyinstances.fhdhd1.repl.co/api/public/version?api_key=${api_key}`)
-//   .then(response => response.text())
-//   .then(api_version => {
-//     if (api_version !== bot_version) {
-//       update();
-//       setTimeout(() => {
-//         process.exit();
-//       }, 2500);
-//     }
-//   })
-//   .catch(error => {
-//     console.error('API request failed:', error);
-//   });
 
-
-
-
-
-/*async function sendLog(logMessage) {
-  const webhookURL = 'https://ptb.discord.com/api/webhooks/1187901775412474077/dsvkogYcDXuyoMGlHxxb3E74O291SBHMknJBoHPWaie_ntKOpBUzSfytZ2nOKeT-Dd7P';
-
-  try {
-    await axios.post(webhookURL, { content: logMessage });
-  } catch (error) {
-    console.error('Erreur lors de l\'envoi du journal :', error.message);
-  }
-}*/
-
-//const webhookClient = new Discord.WebhookClient({ url: "https://ptb.discord.com/api/webhooks/1187901775412474077/dsvkogYcDXuyoMGlHxxb3E74O291SBHMknJBoHPWaie_ntKOpBUzSfytZ2nOKeT-Dd7P" });
-//send le webhook avec le message : test
 
 const run_discord_client = nconf.get('discord:run_discord_client')
 const discord_crash_command = nconf.get('discord:disable_crash_command')
@@ -544,23 +506,7 @@ const deviceauths_1 = {
 
 
 
-    // calculate checksum.
-    /*
-     function calcChecksum(payload, signature) {
-        const token = client.auth.sessions.get("fortnite").token;
-        console.log(client.auth.sessions.get('fortnite'))
-         const plaintext =
-             payload.slice(10, 20) + token + signature.slice(2, 10);
-
-         const data = Buffer.from(plaintext, 'utf16le');
-
-         const hashObject = crypto.createHash('sha1'); // Specify the hash algorithm as 'sha1'
-
-         const hashDigest = hashObject.update(data).digest();
-
-        return Buffer.from(hashDigest.subarray(0, 8)).toString('hex').toUpperCase(); // Corrected the subarray range to match SHA-1 output
-     }
-     */
+   
 
     var bIsMatchmaking = false;
 
