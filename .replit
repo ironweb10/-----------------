@@ -1,6 +1,0 @@
-language = "nodejs"
-run = "node ."
-
-[[ports]]
-localPort = 3000
-externalPort = 80
