@@ -16,6 +16,7 @@ Created by [ironweb10](https://github.com/ironweb10)
     * [x] Blocking friends.
     * [x] Black list users.
     * [x] Anti Crash.
+    * [x] Auto Update Playlists.
 * Discord:
     * [x] Adding webhook logs.
     * [x] Added Discord Bot.
