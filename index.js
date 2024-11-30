@@ -5,7 +5,7 @@ const config = nconf.argv().env().file({ file: 'config.json' });
 const { Client: FNclient, Enums } = require('fnbr');
 const express = require("express");
 const app = express();
-const axios = require('axios').default; // Cette ligne doit rester
+const axios = require('axios').default; 
 
 const version = process.env['version'];
 const crypto = require('crypto');
