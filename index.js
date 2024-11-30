@@ -1159,3 +1159,31 @@ process.on("uncaughtException", (err, origin) => {
 process.on("uncaughtExceptionMonitor", (err, origin) => {
   console.log("Uncaught Exception Monitor:", err, origin);
 });
+
+
+//Auto Update Playlists
+const playlists_url = 'https://fortnite-api.com/v1/playlists';
+
+
+async function updatePlaylists() {
+    try {
+        const response = await axios.get(playlists_url);
+        const playlists = response.data.data;
+
+       
+        const playlistIds = playlists.map(playlist => playlist.id);
+
+      
+        const content = `module.exports.allowedPlaylists = Object.freeze([\n    "${playlistIds.join('",\n    "')}"\n]);\n\nmodule.exports.websocketHeaders = Object.freeze({\n   'Accept-Version': '*',\n   'Pragma': 'no-cache',\n   'Cache-Control': 'no-cache'\n});\n`;
+
+       
+        fs.writeFileSync('utils/constants.js', content, 'utf8');
+
+        console.log('Playlists guardadas en utils/constants.js');
+    } catch (error) {
+        console.error('Error al obtener las playlists:', error);
+    }
+}
+
+
+updatePlaylists();
