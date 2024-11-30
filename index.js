@@ -40,15 +40,18 @@ class WebhookClientWrapper {
       this.webhookEnabled = nconf.get('discord:send_webhook');
 
       
-      setTimeout(() => {
-        if (this.webhookEnabled) {
-            console.log('[DISCORD] Webhook is enabled');
-            this.webhookClient = new WebhookClient({ url });
-        } else {
-            console.log('[DISCORD] Webhook is disabled');
-        }
-    }, 5000); 
-}
+      if (this.webhookEnabled) {
+          if (!url) {
+              console.error('[DISCORD] Webhook URL is not defined.');
+              this.webhookEnabled = false; 
+          } else {
+              console.log('[DISCORD] Webhook is enabled');
+              this.webhookClient = new WebhookClient({ url });
+          }
+      } else {
+          console.log('[DISCORD] Webhook is disabled');
+      }
+  }
 
   send(message) {
       if (this.webhookEnabled) {
@@ -57,7 +60,6 @@ class WebhookClientWrapper {
               .catch(err => console.error('Error al enviar el webhook:', err));
       } else {
           
-          //console.log(message);  
       }
   }
 }
