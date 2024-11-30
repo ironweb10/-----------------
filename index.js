@@ -6,7 +6,7 @@ const { Client: FNclient, Enums } = require('fnbr');
 const express = require("express");
 const app = express();
 const axios = require('axios').default; 
-
+const { WebhookClient } = require('discord.js');
 const version = process.env['version'];
 const crypto = require('crypto');
 const assert = require('assert');
@@ -1179,7 +1179,7 @@ async function updatePlaylists() {
        
         fs.writeFileSync('utils/constants.js', content, 'utf8');
 
-        console.log('Playlists guardadas en utils/constants.js');
+        console.log('Playlists Updated');
     } catch (error) {
         console.error('Error al obtener las playlists:', error);
     }
