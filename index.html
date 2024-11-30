@@ -3,59 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authorization Code Info</title>
+    <title>OAuth Authorization</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
         }
         .container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
             max-width: 500px;
-            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
         }
-        input, button {
+        h1 {
+            font-size: 24px;
+            color: #0078D4;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            text-align: left;
+        }
+        input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            width: 100%;
+            background: #0078D4;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #005ea6;
         }
         .user-info {
             display: none;
-            margin: 20px 0;
+            margin-top: 20px;
         }
         .user-info img {
             border-radius: 50%;
             width: 100px;
             height: 100px;
+            margin-bottom: 10px;
         }
         .user-info h2 {
             margin: 10px 0;
+            font-size: 20px;
+            color: #333;
         }
         .data-section {
             text-align: left;
             margin-top: 20px;
         }
         .data-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 10px 0;
         }
         .data-item span {
             word-break: break-word;
             flex-grow: 1;
         }
         .data-item button {
-            margin-left: 10px;
+            background: #0078D4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
         }
-        pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #ddd;
-            overflow-x: auto;
+        .data-item button:hover {
+            background: #005ea6;
         }
     </style>
 </head>
@@ -72,24 +118,20 @@
         </div>
 
         <div class="data-section" id="dataSection">
-            
-        </div>
 
-        <h2>Raw Response:</h2>
-        <pre id="responseOutput">No response yet...</pre>
+        </div>
     </div>
 
     <script>
         document.getElementById('submitBtn').addEventListener('click', async () => {
             const authCode = document.getElementById('authCode').value;
-            const responseOutput = document.getElementById('responseOutput');
             const userInfo = document.getElementById('userInfo');
             const userIcon = document.getElementById('userIcon');
             const userName = document.getElementById('userName');
             const dataSection = document.getElementById('dataSection');
 
             if (!authCode) {
-                responseOutput.textContent = 'Please enter an authorization code.';
+                alert('Please enter an authorization code.');
                 return;
             }
 
@@ -101,13 +143,11 @@
                 const data = await response.json();
 
                 
-                responseOutput.textContent = JSON.stringify(data, null, 2);
-
                 userIcon.src = data.icon;
                 userName.textContent = data.display_name;
                 userInfo.style.display = 'block';
 
-              
+                
                 dataSection.innerHTML = '';
                 const fields = ['access_token', 'account_id', 'device_id', 'secret'];
                 fields.forEach(field => {
@@ -131,7 +171,7 @@
                 });
 
             } catch (error) {
-                responseOutput.textContent = `Error: ${error.message}`;
+                alert(`Error: ${error.message}`);
             }
         });
     </script>
