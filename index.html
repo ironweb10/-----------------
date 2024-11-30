@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorization Code Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .user-info {
+            display: none;
+            margin: 20px 0;
+        }
+        .user-info img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+        }
+        .user-info h2 {
+            margin: 10px 0;
+        }
+        .data-section {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .data-item span {
+            word-break: break-word;
+            flex-grow: 1;
+        }
+        .data-item button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OAuth Authorization</h1>
+        <label for="authCode">Enter Authorization Code:</label>
+        <input type="text" id="authCode" placeholder="Authorization code" />
+        <button id="submitBtn">Submit</button>
+
+        <div class="user-info" id="userInfo">
+            <img id="userIcon" src="" alt="User Icon">
+            <h2 id="userName">User Name</h2>
+        </div>
+
+        <div class="data-section" id="dataSection">
+            
+        </div>
+
+        <h2>Raw Response:</h2>
+        <pre id="responseOutput">No response yet...</pre>
+    </div>
+
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const authCode = document.getElementById('authCode').value;
+            const responseOutput = document.getElementById('responseOutput');
+            const userInfo = document.getElementById('userInfo');
+            const userIcon = document.getElementById('userIcon');
+            const userName = document.getElementById('userName');
+            const dataSection = document.getElementById('dataSection');
+
+            if (!authCode) {
+                responseOutput.textContent = 'Please enter an authorization code.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api-xji1.onrender.com/oauth?authorization_code=${authCode}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                
+                responseOutput.textContent = JSON.stringify(data, null, 2);
+
+                userIcon.src = data.icon;
+                userName.textContent = data.display_name;
+                userInfo.style.display = 'block';
+
+              
+                dataSection.innerHTML = '';
+                const fields = ['access_token', 'account_id', 'device_id', 'secret'];
+                fields.forEach(field => {
+                    const item = document.createElement('div');
+                    item.className = 'data-item';
+
+                    const value = document.createElement('span');
+                    value.textContent = `${field}: ${data[field]}`;
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.textContent = 'Copy';
+                    copyBtn.addEventListener('click', () => {
+                        navigator.clipboard.writeText(data[field])
+                            .then(() => alert(`${field} copied!`))
+                            .catch(err => alert(`Failed to copy: ${err}`));
+                    });
+
+                    item.appendChild(value);
+                    item.appendChild(copyBtn);
+                    dataSection.appendChild(item);
+                });
+
+            } catch (error) {
+                responseOutput.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
