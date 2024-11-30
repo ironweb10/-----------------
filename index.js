@@ -19,7 +19,7 @@ const HttpsProxyAgent = require('https-proxy-agent');
 const xmlparser = require('xml-parser');
 require('colors');
 const Discord = require("discord.js")
-const webhookClient = new Discord.WebhookClient({ url: process.env.DISCORD_WEBHOOK_URL });
+
 const clientOptions = {
   defaultStatus: "Launching",
   auth: {},
@@ -28,13 +28,42 @@ const clientOptions = {
   platform: 'WIN',
   partyConfig: {
     chatEnabled: true,
-    maxSize: 4
+    maxSize: 16
   }
 };
 const client = new FNclient(clientOptions);
 party = client.party
 
+class WebhookClientWrapper {
+  constructor(url) {
+      
+      this.webhookEnabled = nconf.get('discord:send_webhook');
 
+      
+      setTimeout(() => {
+        if (this.webhookEnabled) {
+            console.log('[DISCORD] Webhook is enabled');
+            this.webhookClient = new WebhookClient({ url });
+        } else {
+            console.log('[DISCORD] Webhook is disabled');
+        }
+    }, 5000); 
+}
+
+  send(message) {
+      if (this.webhookEnabled) {
+          
+          return this.webhookClient.send(message)
+              .catch(err => console.error('Error al enviar el webhook:', err));
+      } else {
+          
+          //console.log(message);  
+      }
+  }
+}
+
+
+const webhookClient = new WebhookClientWrapper(process.env.DISCORD_WEBHOOK_URL);
 
 
 
@@ -42,14 +71,14 @@ try {
   //eval(code)
   console.clear()
 } catch (error) {
-  webhookClient.send(`SKIDDING ERROR: ${error}`)
+  webhookClient.send(`OHIO IMPOSTOR FORTNITE ERROR: ${error}`)
 }
 client.on('party:invite', async (request) => {
   const party = client.party;
   const inviterName = request.sender.displayName;
   
 //Put here the blacklisted accounts
-  const bannedNames = ['1', '2', '3'];
+  const bannedNames = ['epicgames', '2', '3'];
   
 
   if (bannedNames.includes(inviterName)) {
@@ -318,7 +347,7 @@ const deviceauths_1 = {
     await client.login();
     webhookClient.send(`Bot Fortnite
 \`\`\`diff
-+ ${client.user.self.displayName} Onlinee\`\`\``);
++ ${client.user.self.displayName} Online\`\`\``);
     party = client.party
     const fnbrclient = client
     client.setStatus(bot_invite_status, bot_invite_onlinetype)
@@ -980,10 +1009,10 @@ if (!calculatedchecksum) {
 
       let time = 1 * minute
       async function leavepartyexpire() {
-        client.party.chat.send("Timer Fini !")
+        client.party.chat.send("Timer ended !")
         await sleep(1.2)
         client.party.leave()
-        const webhookClient = new Discord.WebhookClient({ url: process.env.DISCORD_WEBHOOK_URL });
+        
         webhookClient.send(`
             \`\`\`diff
             The bot ${client.user.self.displayName} Says it has an error with its Token game\`\`\``)
@@ -1006,10 +1035,10 @@ if (!calculatedchecksum) {
         webhookClient.send(`
         \`\`\`diff
         + Bot ${client.user.self.displayName} joined \`\`\``);
-        //const webhookClient = new Discord.WebhookClient({ url: "https://ptb.discord.com/api/webhooks/1187901775412474077/dsvkogYcDXuyoMGlHxxb3E74O291SBHMknJBoHPWaie_ntKOpBUzSfytZ2nOKeT-Dd7P" });
+        
         webhookClient.send(`
         \`\`\`diff
-        + The bot ${client.user.self.displayName} joined \`\`\``) //sends the webhook with the message: test
+        + The bot ${client.user.self.displayName} joined \`\`\``) 
         let membersstr = "";
         join.party.members.map(async member => {
           membersstr += member.displayName + '\n'
@@ -1112,3 +1141,21 @@ if (!calculatedchecksum) {
       console.log("[DISCORD] client is disabled!")
     }
     })();
+
+    
+//AntiCrash Sysyem
+dclient.on("error", (err) => {
+  console.log("Discord API Error:", err);
+});
+
+process.on("unhandledRejection", (reason, p) => {
+  console.log("Unhandled promise rejection:", reason, p);
+});
+
+process.on("uncaughtException", (err, origin) => {
+  console.log("Uncaught Exception:", err, origin);
+});
+
+process.on("uncaughtExceptionMonitor", (err, origin) => {
+  console.log("Uncaught Exception Monitor:", err, origin);
+});
