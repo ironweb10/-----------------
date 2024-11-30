@@ -1,7 +1,7 @@
 # Iron web Bot lobbies
 ![image](https://i.imgur.com/VfBFQaQ.jpeg)
 
-Iron web Bot lobbies is the best bot lobbies code.
+Iron web Bot lobbies is the best bot lobbies lobby bot.
 Created by [ironweb10](https://github.com/ironweb10)
 
 
