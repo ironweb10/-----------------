@@ -19,19 +19,19 @@ async function initializeFortniteBot(config, webhookClient) {
 
     const client = new FNclient(clientOptions);
 
-    // Evento: Bot conectado
+   
     client.on('ready', async () => {
         console.log("[FORTNITE] Bot logged in as:", client.user.displayName);
         webhookClient.send(`Fortnite Bot online as: ${client.user.displayName}`);
 
-        // Configurar apariencia inicial
+        
         await client.party.me.setOutfit(config.get('fortnite:cid') || 'CID_001');
         await client.party.me.setBackpack(config.get('fortnite:bid') || 'BID_001');
         await client.party.me.setLevel(config.get('fortnite:level') || 1);
         await client.party.setPrivacy(Enums.PartyPrivacy.PUBLIC);
     });
 
-    // Evento: Invitación a la fiesta
+   
     client.on('party:invite', async (request) => {
         const whitelist = config.get('fortnite:whitelist') || [];
         if (whitelist.includes(request.sender.id)) {
@@ -43,24 +43,24 @@ async function initializeFortniteBot(config, webhookClient) {
         }
     });
 
-    // Evento: Miembro se une a la fiesta
+   
     client.on('party:member:joined', (member) => {
         console.log(`[FORTNITE] ${member.displayName} se unió a la fiesta.`);
         webhookClient.send(`${member.displayName} se unió a la fiesta.`);
     });
 
-    // Evento: Miembro sale de la fiesta
+    
     client.on('party:member:left', (member) => {
         console.log(`[FORTNITE] ${member.displayName} salió de la fiesta.`);
         webhookClient.send(`${member.displayName} salió de la fiesta.`);
     });
 
-    // Evento: Mensaje en el chat de la fiesta
+   
     client.on('party:member:message', (msg) => {
         console.log(`[FORTNITE CHAT] ${msg.author.displayName}: ${msg.content}`);
     });
 
-    // Evento: Solicitud de amistad
+  
     client.on('friend:request', async (request) => {
         const autoAdd = config.get('fortnite:add_users') || false;
         if (autoAdd) {
@@ -72,7 +72,7 @@ async function initializeFortniteBot(config, webhookClient) {
         }
     });
 
-    // Manejo de errores
+   
     client.on('error', (err) => {
         console.error('[FORTNITE ERROR]', err);
         webhookClient.send(`[ERROR] Fortnite bot encountered an error: ${err.message}`);
