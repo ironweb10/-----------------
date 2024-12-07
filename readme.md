@@ -14,7 +14,7 @@ Created by [ironweb10](https://github.com/ironweb10)
     * [x] Accepting friend requests.
     * [x] Removing friends.
     * [x] Blocking friends.
-    * [x] Black list users.
+
     * [x] Anti Crash.
     * [x] Auto Update Playlists.
 * Discord:
