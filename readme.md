@@ -19,14 +19,16 @@ Created by [ironweb10](https://github.com/ironweb10)
     * [x] Auto Update Playlists.
 * Discord:
     * [x] Adding webhook logs.
-    * [x] Added Discord Bot.
+    * [] Added Discord Bot.
     * [x] Added webhook disable option
 
 ## TO-DO
 - [ ] Fix Crash Bugs.
 - [ ] Add the posibility to win crowns.
+- [ ] Make a dashboard
+- [ ] Discord Bot
 
-## Discord Bot Commands
+## Discord Bot Commands (Soon)
 
 ### User Commands:
 - `/add` - Adds a user.
