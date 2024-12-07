@@ -1,21 +1,50 @@
-
-require('dotenv').config();
+require('dotenv').config();  // Load environment variables first
 const nconf = require('nconf').argv().env().file({ file: './config/config.json' });
 const express = require("express");
-const { initializeDiscordBot } = require('./handlers/discordHandler');
-const { initializeFortniteBot } = require('./handlers/partyHandler');
-
+const { spawn } = require("child_process");
+const WebhookClientWrapper = require('./utils/webhookClient'); 
+const updatePlaylists = require('./structs/playlist-updater');  
+const axios = require("axios");
+const chalk = require('chalk');
 
 const app = express();
-const webhookClient = require('./utils/webhookClient');
 const port = 8080;
 
+let webhookClient;
+try {
+  webhookClient = new WebhookClientWrapper(); 
+  
+} catch (error) {
+  console.error(chalk.red('Error initializing webhook client: '), error);
+  process.exit(1);  
+}
 
-initializeDiscordBot(nconf, webhookClient);
-initializeFortniteBot(nconf, webhookClient);
+updatePlaylists();
 
+const executeScript = (scriptName, scriptArgs = []) => {
+  const script = spawn("node", [scriptName, ...scriptArgs]);
+
+  script.stdout.on("data", (data) => {
+    console.log(chalk.green(`Lobby Bot --> ${data}`));
+  });
+
+  script.stderr.on("data", (data) => {
+    console.error(chalk.red(`Lobby Bot Error --> ${data}`));
+  });
+
+  script.on("close", (code) => {
+    if (code === 0) {
+      console.log(chalk.blue(`${scriptName} finished with code ${code}`));
+    } else {
+      console.log(chalk.yellow(`Restarting Lobby Bot...`));
+      executeScript(scriptName, scriptArgs);  
+    }
+  });
+};
+
+executeScript("structs/lobbybot.js");
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-    webhookClient.send('Bot started successfully.');
+  console.log(`Server running ${port}`);
+  
 });

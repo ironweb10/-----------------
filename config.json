@@ -20,8 +20,6 @@
   },
   "discord": {
     "run_discord_client": false,
-    "guild_slash_status_response": "your discord logs channel",
-    "command_guild": "",
     "status": "By iron web10",
     "status_type": "WATCHING",
     "disable_crash_command": true, 
