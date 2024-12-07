@@ -1,4 +1,4 @@
-require('dotenv').config();  // Load environment variables first
+require('dotenv').config();  
 const nconf = require('nconf').argv().env().file({ file: './config/config.json' });
 const express = require("express");
 const { spawn } = require("child_process");
