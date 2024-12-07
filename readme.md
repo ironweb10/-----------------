@@ -19,7 +19,7 @@ Created by [ironweb10](https://github.com/ironweb10)
     * [x] Auto Update Playlists.
 * Discord:
     * [x] Adding webhook logs.
-    * [] Added Discord Bot.
+    * [ ] Added Discord Bot.
     * [x] Added webhook disable option
 
 ## TO-DO
