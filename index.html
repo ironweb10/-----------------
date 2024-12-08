@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Authorization</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             background: #f0f2f5;
@@ -16,92 +22,143 @@
             min-height: 100vh;
             color: #333;
         }
+
         .container {
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
             width: 90%;
             max-width: 500px;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
+            transition: all 0.3s ease;
         }
+
+        .container:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             color: #0078D4;
+            margin-bottom: 20px;
         }
+
         label {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: block;
             text-align: left;
         }
+
         input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 12px 0;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 8px;
+            transition: border 0.3s ease;
         }
+
+        input:focus {
+            border-color: #0078D4;
+        }
+
         button {
             width: 100%;
             background: #0078D4;
             color: #fff;
             border: none;
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
+
         button:hover {
             background: #005ea6;
+            transform: translateY(-2px);
         }
+
         .user-info {
             display: none;
             margin-top: 20px;
         }
+
         .user-info img {
             border-radius: 50%;
             width: 100px;
             height: 100px;
             margin-bottom: 10px;
+            object-fit: cover;
         }
+
         .user-info h2 {
             margin: 10px 0;
-            font-size: 20px;
+            font-size: 22px;
             color: #333;
         }
+
         .data-section {
             text-align: left;
             margin-top: 20px;
         }
+
         .data-item {
             background: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.3s ease;
         }
+
+        .data-item:hover {
+            background: #f1f1f1;
+        }
+
         .data-item span {
             word-break: break-word;
             flex-grow: 1;
+            font-size: 14px;
         }
+
         .data-item button {
             background: #0078D4;
             color: #fff;
             border: none;
             border-radius: 5px;
-            padding: 5px 10px;
+            padding: 5px 12px;
             cursor: pointer;
             font-size: 14px;
             transition: background 0.3s ease;
         }
+
         .data-item button:hover {
             background: #005ea6;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+
+            input {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -114,12 +171,11 @@
         <button id="submitBtn">Submit</button>
 
         <div class="user-info" id="userInfo">
-            <img id="userIcon" src="" alt="User Icon">
+            <img id="userIcon" src="https://static.wikia.nocookie.net/logopedia/images/1/19/Fortnite_Icon_2020_-_3.jpeg" alt="User Icon">
             <h2 id="userName">User Name</h2>
         </div>
 
         <div class="data-section" id="dataSection">
-
         </div>
     </div>
 
@@ -143,12 +199,10 @@
                 }
                 const data = await response.json();
 
-                
-                userIcon.src = data.icon;
-                userName.textContent = data.display_name;
+                userIcon.src = data.icon || 'https://static.wikia.nocookie.net/logopedia/images/1/19/Fortnite_Icon_2020_-_3.jpeg';
+                userName.textContent = data.display_name || 'User Name';
                 userInfo.style.display = 'block';
 
-                
                 dataSection.innerHTML = '';
                 const fields = ['access_token', 'account_id', 'device_id', 'secret'];
                 fields.forEach(field => {
