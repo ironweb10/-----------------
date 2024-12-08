@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/x-icon" href="https://static.wikia.nocookie.net/logopedia/images/1/19/Fortnite_Icon_2020_-_3.jpeg">
+ 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Authorization</title>
@@ -165,8 +167,10 @@
 <body>
     <div class="container">
         <h1>OAuth Authorization</h1>
-        <label for="authCode">[Get Authorization Code](https://www.epicgames.com/id/api/redirect?clientId=3f69e56c7649492c8cc29f1af08a8a12&responseType=code)</label>
         <label for="authCode">Enter Authorization Code:</label>
+<input type="text" id="authCode" placeholder="Authorization code" />
+<p><a href="https://www.epicgames.com/id/api/redirect?clientId=3f69e56c7649492c8cc29f1af08a8a12&responseType=code" target="_blank">Get Authorization Code</a></p>
+<label for="authCode">Enter Authorization Code:</label>
         <input type="text" id="authCode" placeholder="Authorization code" />
         <button id="submitBtn">Submit</button>
 
