@@ -27,7 +27,7 @@ Created by [ironweb10](https://github.com/ironweb10)
 - [ ] Add the posibility to win crowns.
 - [ ] Make a dashboard
 
-## Discord Bot Commands (Soon)
+## Discord Bot Commands
 
 ### User Commands:
 - `/add` - Adds a user.
