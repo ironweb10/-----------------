@@ -359,4 +359,84 @@ const fetchVersion = require('../utils/version');
     sendWebhook(`- BOT ${botClient.user.self.displayName} And The player to leave: ${member.displayName}`);
     managePartySize();
   });
+
+
+
+
+
+//Discord Bot
+
+
+
+  const { Client: Dclient, Intents, MessageEmbed } = require('discord.js');
+
+const chalk = require('chalk');
+
+const { discord_status_type, discord_status, run_discord_client } = require('./config');
+
+function initializeDiscordBot() {
+    const dclient = new Dclient({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+    dclient.commands = new Map();
+
+    dclient.once('ready', () => {
+        console.log(chalk.blue("[DISCORD] Bot online!"));
+        dclient.user.setActivity(discord_status, { type: discord_status_type });
+
+        const commands = [];
+        const commandsPath = path.join(__dirname, './../DiscordBotCommands');
+        
+        fs.readdirSync(commandsPath).forEach(file => {
+            const command = require(path.join(commandsPath, file));
+            if (command.data && command.execute) {
+                dclient.commands.set(command.data.name, command);  
+                commands.push(command.data.toJSON());
+            }
+        });
+
+        dclient.application.commands.set(commands)
+            .then(() => {
+                console.log(chalk.blue("[DISCORD] Commands refreshed!"));
+            })
+            .catch((error) => {
+                console.error(chalk.red("[DISCORD] Error refreshing commands: "), error);
+            });
+    });
+
+    dclient.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    const command = dclient.commands.get(interaction.commandName); 
+
+    if (!command) {
+        const embed = new MessageEmbed()
+            .setColor('#FF0000')
+            .setTitle('Error')
+            .setDescription('Unknown command.');
+        return interaction.reply({ embeds: [embed] });
+    }
+
+    try {
+ 
+        await command.execute(interaction, botClient);
+    } catch (error) {
+        console.error(error);
+        const embed = new MessageEmbed()
+            .setColor('#FF0000')
+            .setTitle('Error')
+            .setDescription('There was an error executing the command.');
+        return interaction.reply({ embeds: [embed] });
+    }
+});
+
+
+    if (run_discord_client) {
+        dclient.login(process.env.DISCORD_TOKEN);
+    } else {
+        console.log(chalk.blue("[DISCORD] Client disabled."));
+    }
+}
+
+initializeDiscordBot();
+
 })();

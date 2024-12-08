@@ -19,7 +19,7 @@
     "inuse_onlinetype": "xa"
   },
   "discord": {
-    "run_discord_client": false,
+    "run_discord_client": true,
     "status": "By iron web10",
     "status_type": "WATCHING",
     "disable_crash_command": true, 

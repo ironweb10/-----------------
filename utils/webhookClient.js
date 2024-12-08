@@ -24,7 +24,7 @@ class WebhookClientWrapper {
             return this.webhookClient.send(message)
                 .catch(err => console.error('Error sending webhook:', err));
         } else {
-            console.log('[DISCORD] Webhook is disabled or client is not initialized.');
+            
         }
     }
 }
