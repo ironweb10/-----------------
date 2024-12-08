@@ -19,14 +19,13 @@ Created by [ironweb10](https://github.com/ironweb10)
     * [x] Auto Update Playlists.
 * Discord:
     * [x] Adding webhook logs.
-    * [ ] Added Discord Bot.
+    * [x] Added Discord Bot.
     * [x] Added webhook disable option
 
 ## TO-DO
 - [ ] Fix Crash Bugs.
 - [ ] Add the posibility to win crowns.
 - [ ] Make a dashboard
-- [ ] Discord Bot
 
 ## Discord Bot Commands (Soon)
 
@@ -68,13 +67,13 @@ Created by [ironweb10](https://github.com/ironweb10)
 
 - `/stoptimer` - Stops the setTimeout function (party timer).
 
-- `/setemote` - Sets the client's emote with an ID.
+- `/setemote` - Sets the client's emote with a name.
   - **Options**:
-    - `emoteid`: The ID of the emote (Required).
+    - `emotename`: The name of the emote (Required).
 
-- `/setoutfit` - Sets an outfit with an ID.
+- `/setoutfit` - Sets an outfit with a name.
   - **Options**:
-    - `skinid`: The ID of the skin (Optional).
+    - `skinname`: The name of the skin (Required).
 
 - `/restartfnclient` - Restarts the Fortnite client.
 
