@@ -2,8 +2,8 @@
   "fortnite": {
     "cid": "CID_267_Athena_Commando_M_RobotRed",
     "cid_path": "FortniteGame/Content/Athena/Items/Cosmetics/Characters/CID_267_Athena_Commando_M_RobotRed",
-    "bid": "",
-    "bid_path": "",
+    "bid": "BID_STWHero",
+    "bid_path": "FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics/Backpacks/BID_A_021_LancelotMale",
     "eid": "EID_HipHop01",
     "eid_path": "FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics/Dances/EID_HipHop01",
     "level": "66666666",
