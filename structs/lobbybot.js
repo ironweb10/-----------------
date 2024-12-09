@@ -2,7 +2,7 @@ const { bot_invite_status, cid, bid, level, banner, bot_invite_onlinetype, bot_u
 
 const axiosInstance = require('axios').default;
 const system = require('os');
-const { Client, ClientOptions, Enums, Party } = require('fnbr');
+const { Client: botClientClass, ClientOptions, Enums, Party } = require('fnbr');
 const WebSocket = require('ws');
 const fs = require('fs');
 const path = require('path');
@@ -28,45 +28,57 @@ const fetchVersion = require('../utils/version');
   axiosInstance.defaults.headers["user-agent"] = userAgentString;
   console.log("UserAgent set to", axiosInstance.defaults.headers["user-agent"]);
 
-  const deviceAuthData = {
-    "accountId": process.env.ACCOUNT1_ID,
-    "deviceId": process.env.ACCOUNT1_DEVICE_ID,
-    "secret": process.env.ACCOUNT1_SECRET,
-  };
+  let accountsObject = [];
+  let accounts = [];
+ 
+  const numberOfAccounts = Object.keys(process.env).filter(key => key.startsWith('ACCOUNT') && key.includes('_ID')).length;
+  const halfOfAccounts = Math.floor(numberOfAccounts / 2); 
+  console.log(`Number of accounts (bots) detected: ${halfOfAccounts}`);
+  
+  for (let i = 1; i <= numberOfAccounts; i++) {
+    const accountId = process.env[`ACCOUNT${i}_ID`];
+    const deviceId = process.env[`ACCOUNT${i}_DEVICE_ID`];
+    const secret = process.env[`ACCOUNT${i}_SECRET`];
+  
+    if (accountId && deviceId && secret) {
+      accounts.push({
+        accountId,
+        deviceId,
+        secret,
+      });
+    }
+  }
 
   /**
    * @type {ClientOptions}
    */
-  const clientConfig = {
-    defaultStatus: "Launching Kali Linux...",
-    auth: {},
-    debug: console.log,
-    xmppDebug: false,
-    platform: 'WIN',
-    partyConfig: {
-      chatEnabled: true,
-      maxSize: 4
-    }
-  };
+  for (const deviceAuth of accounts) {
 
-  try {
-    clientConfig.auth.deviceAuth = deviceAuthData;
-  } catch (error) {
-    console.error("Error setting device authentication:", error);
-  }
+    const botClient = new botClientClass({
+      defaultStatus: "Launching Kali Linux...",
+      auth: { deviceAuth },
+      debug: console.log,
+      xmppDebug: false,
+      platform: 'WIN',
+      partyConfig: {
+        chatEnabled: true,
+        maxSize: 4,
+      },
+    });
 
-  const botClient = new Client(clientConfig);
-  await botClient.login();
-  console.log(`[LOGS] Logged in as ${botClient.user.self.displayName}`);
-  webhookClient.send(`\`\`\`diff\n+ ${botClient.user.self.displayName} Online.\`\`\``);
-  const partyInstance = botClient.party;
-  botClient.setStatus(bot_invite_status);
-  await botClient.party.me.setOutfit(cid);
-  await botClient.party.setPrivacy(Enums.PartyPrivacy.PRIVATE);
-  await botClient.party.me.setLevel(level);
-  await botClient.party.me.setBanner(banner);
-  await botClient.party.me.setBackpack(bid);
-
+ 
+    await botClient.login();
+    console.log(`[LOGS] Logged in as ${botClient.user.self.displayName}`);
+    webhookClient.send(`\`\`\`diff\n+ ${botClient.user.self.displayName} Online.\`\`\``);
+    
+    const partyInstance = botClient.party;
+    botClient.setStatus(bot_invite_status);
+    await botClient.party.me.setOutfit(cid);
+    await botClient.party.setPrivacy(Enums.PartyPrivacy.PRIVATE);
+    await botClient.party.me.setLevel(level);
+    await botClient.party.me.setBanner(banner);
+    await botClient.party.me.setBackpack(bid);
+  
   axiosInstance.interceptors.response.use(undefined, function (error) {
     if (error.response) {
       if (error.response.data.errorCode && botClient && botClient.party) {
@@ -361,7 +373,7 @@ const fetchVersion = require('../utils/version');
   });
 
 
-
+}
 
 
 //Discord Bot
