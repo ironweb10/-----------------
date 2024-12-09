@@ -14,6 +14,7 @@
     "pm2": "^5.2.0",
     "wokcommands": "^2.1.0",
     "ws": "^8.5.0",
-    "xml-parser": "^1.2.1"
+    "xml-parser": "^1.2.1",
+    "youtube-api-v3-search": "^1.2.1"
   }
 }
