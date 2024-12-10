@@ -16,7 +16,7 @@ module.exports = {
       ),
     async execute(interaction, botClient) {
       const message = interaction.options.getString('message');
-      fnbrclient.party.chat.send(message);
+      botclient.party.chat.send(message);
       const embed = new MessageEmbed()
         .setColor('#00FF00')
         .setTitle('Message Sent')
