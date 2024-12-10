@@ -54,7 +54,7 @@ const fetchVersion = require('../utils/version');
    */
   for (const deviceAuth of accounts) {
 
-    global.botClient = new botClientClass({
+    const botClient = new botClientClass({
       defaultStatus: "Launching Kali Linux...",
       auth: { deviceAuth },
       debug: console.log,
@@ -65,6 +65,7 @@ const fetchVersion = require('../utils/version');
         maxSize: 4,
       },
     });
+    global.botClient = botClient;
 
  
     await botClient.login();
