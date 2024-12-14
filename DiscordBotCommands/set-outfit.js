@@ -13,7 +13,7 @@ module.exports = {
         const cosmeticName = interaction.options.getString('cosmeticname').toLowerCase();
 
         try {
-            const response = await fetch(`https://fortnite-api.com/v2/cosmetics/br/search?name=${cosmeticName}`);
+            const response = await fetch(`https://fortnite-api.com/v2/cosmetics/br/search?name=${cosmeticName}`); // hey iron web10 just saying this doesnt work!!! fix it with https://chatgpt.com/
             const data = await response.json();
 
             if (data.status !== 200 || !data.data) {
