@@ -6,18 +6,17 @@ const { MessageEmbed } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
       .setName('enablecrowns')
-      .setDescription('Enables Crowns, making lobbies harder'),
+      .setDescription('Enables Crowns.'),
     async execute(interaction, botClient) {
       try {
-        botClient.party.setPlaylist({ playlistName: 'playlist_bots_nobuildbr_duo' });
-        botClient.party.chat.send('A user has enabled Crowns, meaning the lobbies might be harder!');
-        setTimeout(() => {
+        botClient.party.setPlaylist('playlist_bots_nobuildbr_duo');
+         setTimeout(() => {
           botClient.party.leave();
-        }, 2000);
+        }, 3000);
         const embed = new MessageEmbed()
           .setColor('#00FF00')
           .setTitle('Crowns Enabled')
-          .setDescription('Enabled Crowns. REMINDER: These lobbies will be harder.')
+          .setDescription('Enabled Crowns 👑.')
           .setTimestamp();
         await interaction.reply({ embeds: [embed] });
       } catch (error) {
