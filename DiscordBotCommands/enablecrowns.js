@@ -9,7 +9,7 @@ module.exports = {
       .setDescription('Enables Crowns.'),
     async execute(interaction, botClient) {
       try {
-        botClient.party.setPlaylist('playlist_bots_nobuildbr_duo');
+        botClient.party.setPlaylist('playlist_bots_defaultduo');
          setTimeout(() => {
           botClient.party.leave();
         }, 3000);
